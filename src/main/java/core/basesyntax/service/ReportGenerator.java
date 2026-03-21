@@ -1,22 +1,8 @@
-package core.basesyntax.service.impl;
+package core.basesyntax.service;
 
-import core.basesyntax.service.ReportGenerator;
 import java.util.Map;
 
-public class ReportGeneratorImpl implements ReportGenerator {
-    @Override
-    public String getReport(Map<String, Integer> fruits) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("fruit,quantity\n");
-
-        for (Map.Entry<String, Integer> entry : fruits.entrySet()) {
-            sb.append(entry.getKey())
-                    .append(",")
-                    .append(entry.getValue())
-                    .append("\n");
-        }
-
-        return sb.toString();
-    }
+public interface ReportGenerator {
+    String getReport(Map<String, Integer> fruits);
 }
 

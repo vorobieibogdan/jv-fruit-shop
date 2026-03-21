@@ -4,12 +4,12 @@ import core.basesyntax.db.Storage;
 import core.basesyntax.model.FruitTransaction;
 import core.basesyntax.strategy.OperationHandler;
 
-public class SupplyOperation implements OperationHandler {
+public class PurchaseOperation implements OperationHandler {
     @Override
     public void handle(FruitTransaction transaction) {
         Storage.fruits.merge(
                 transaction.getFruit(),
-                transaction.getQuantity(),
+                -transaction.getQuantity(),
                 Integer::sum
         );
     }

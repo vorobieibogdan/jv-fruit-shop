@@ -7,13 +7,13 @@ public class ReportGeneratorImpl implements ReportGenerator {
     @Override
     public String getReport(Map<String, Integer> fruits) {
         StringBuilder sb = new StringBuilder();
-        sb.append("fruit,quantity").append(System.lineSeparator());
+        sb.append("fruit,quantity\n");
 
         for (Map.Entry<String, Integer> entry : fruits.entrySet()) {
             sb.append(entry.getKey())
                     .append(",")
                     .append(entry.getValue())
-                    .append(System.lineSeparator());
+                    .append("\n");
         }
 
         return sb.toString();
