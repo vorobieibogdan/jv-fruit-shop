@@ -1,6 +1,7 @@
 package core.basesyntax;
 
 import core.basesyntax.db.Storage;
+import core.basesyntax.model.FruitTransaction;
 import core.basesyntax.service.*;
 import core.basesyntax.service.impl.*;
 import core.basesyntax.strategy.OperationHandler;
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Main {
-    private static final String INPUT_FILE = "src/main/resources/input.csv";
-    private static final String OUTPUT_FILE = "src/main/resources/output.csv";
+    private static final String INPUT = "src/main/resources/input.csv";
+    private static final String OUTPUT = "src/main/resources/output.csv";
 
     public static void main(String[] args) {
         FileReaderService reader = new FileReaderServiceImpl();
@@ -21,27 +22,22 @@ public class Main {
         FileWriterService writer = new FileWriterServiceImpl();
         ReportGenerator reportGenerator = new ReportGeneratorImpl();
 
-        Map<core.basesyntax.model.FruitTransaction.Operation,
-                OperationHandler> handlers = new HashMap<>();
-
-        handlers.put(core.basesyntax.model.FruitTransaction.Operation.BALANCE,
-                new BalanceOperation());
-        handlers.put(core.basesyntax.model.FruitTransaction.Operation.SUPPLY,
-                new SupplyOperation());
-        handlers.put(core.basesyntax.model.FruitTransaction.Operation.PURCHASE,
-                new PurchaseOperation());
-        handlers.put(core.basesyntax.model.FruitTransaction.Operation.RETURN,
-                new ReturnOperation());
+        Map<FruitTransaction.Operation, OperationHandler> handlers = new HashMap<>();
+        handlers.put(FruitTransaction.Operation.BALANCE, new BalanceOperation());
+        handlers.put(FruitTransaction.Operation.SUPPLY, new SupplyOperation());
+        handlers.put(FruitTransaction.Operation.PURCHASE, new PurchaseOperation());
+        handlers.put(FruitTransaction.Operation.RETURN, new ReturnOperation());
 
         OperationStrategy strategy = new OperationStrategyImpl(handlers);
-        FruitShopService shopService = new FruitShopServiceImpl(strategy);
+        FruitShopService service = new FruitShopServiceImpl(strategy);
 
-        List<String> lines = reader.read(INPUT_FILE);
-        var transactions = converter.convertToTransaction(lines);
-        shopService.process(transactions);
+        List<String> lines = reader.read(INPUT);
+        List<FruitTransaction> transactions = converter.convertToTransaction(lines);
+
+        service.process(transactions);
 
         String report = reportGenerator.getReport(Storage.fruits);
-        writer.write(report, OUTPUT_FILE);
+        writer.write(report, OUTPUT);
     }
 }
 

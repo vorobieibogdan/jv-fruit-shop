@@ -15,9 +15,6 @@ public class OperationStrategyImpl implements OperationStrategy {
 
     @Override
     public OperationHandler get(FruitTransaction.Operation operation) {
-        if (!handlers.containsKey(operation)) {
-            throw new RuntimeException("No handler for operation: " + operation);
-        }
         return handlers.get(operation);
     }
 }
