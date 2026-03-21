@@ -6,28 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataConverterImpl implements DataConverter {
-
     @Override
-    public List<FruitTransaction> convertToTransaction(List<String> data) {
+    public List<FruitTransaction> convertToTransaction(List<String> lines) {
         List<FruitTransaction> transactions = new ArrayList<>();
 
-        for (String line : data) {
-            String[] parts = line.split(",");
+        for (int i = 1; i < lines.size(); i++) {
+            String[] parts = lines.get(i).split(",");
 
-            FruitTransaction transaction = new FruitTransaction();
+            FruitTransaction.Operation operation =
+                    FruitTransaction.Operation.fromCode(parts[0]);
+            String fruit = parts[1];
+            int quantity = Integer.parseInt(parts[2]);
 
-            transaction.setFruit(parts[1]);
-            transaction.setQuantity(Integer.parseInt(parts[2]));
-
-            for (FruitTransaction.Operation op
-                    : FruitTransaction.Operation.values()) {
-
-                if (op.getCode().equals(parts[0])) {
-                    transaction.setOperation(op);
-                }
-            }
-
-            transactions.add(transaction);
+            transactions.add(new FruitTransaction(operation, fruit, quantity));
         }
 
         return transactions;

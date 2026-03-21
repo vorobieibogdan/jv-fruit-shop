@@ -1,23 +1,22 @@
 package core.basesyntax.service.impl;
 
-import core.basesyntax.db.Storage;
 import core.basesyntax.service.ReportGenerator;
+import java.util.Map;
 
 public class ReportGeneratorImpl implements ReportGenerator {
-
     @Override
-    public String getReport() {
+    public String getReport(Map<String, Integer> fruits) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("fruit,quantity").append(System.lineSeparator());
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("fruit,quantity\n");
+        for (Map.Entry<String, Integer> entry : fruits.entrySet()) {
+            sb.append(entry.getKey())
+                    .append(",")
+                    .append(entry.getValue())
+                    .append(System.lineSeparator());
+        }
 
-        Storage.fruits.forEach((fruit, quantity) ->
-                builder.append(fruit)
-                        .append(",")
-                        .append(quantity)
-                        .append("\n"));
-
-        return builder.toString();
+        return sb.toString();
     }
 }
 

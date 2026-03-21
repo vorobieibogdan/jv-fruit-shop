@@ -1,66 +1,47 @@
 package core.basesyntax;
 
 import core.basesyntax.db.Storage;
-import core.basesyntax.service.DataConverter;
-import core.basesyntax.service.FileReaderService;
-import core.basesyntax.service.FileWriterService;
-import core.basesyntax.service.FruitShopService;
-import core.basesyntax.service.ReportGenerator;
-import core.basesyntax.service.impl.DataConverterImpl;
-import core.basesyntax.service.impl.FileReaderServiceImpl;
-import core.basesyntax.service.impl.FileWriterServiceImpl;
-import core.basesyntax.service.impl.FruitShopServiceImpl;
-import core.basesyntax.service.impl.ReportGeneratorImpl;
+import core.basesyntax.service.*;
+import core.basesyntax.service.impl.*;
 import core.basesyntax.strategy.OperationHandler;
 import core.basesyntax.strategy.OperationStrategy;
-import core.basesyntax.strategy.impl.BalanceOperation;
-import core.basesyntax.strategy.impl.OperationStrategyImpl;
-import core.basesyntax.strategy.impl.PurchaseOperation;
-import core.basesyntax.strategy.impl.ReturnOperation;
-import core.basesyntax.strategy.impl.SupplyOperation;
+import core.basesyntax.strategy.impl.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
-    private static final String INPUT_FILE =
-            "src/main/resources/input.csv";
-    private static final String OUTPUT_FILE =
-            "src/main/resources/output.csv";
+    private static final String INPUT_FILE = "src/main/resources/input.csv";
+    private static final String OUTPUT_FILE = "src/main/resources/output.csv";
 
     public static void main(String[] args) {
-
-        // services
-        FileReaderService readerService = new FileReaderServiceImpl();
+        FileReaderService reader = new FileReaderServiceImpl();
         DataConverter converter = new DataConverterImpl();
+        FileWriterService writer = new FileWriterServiceImpl();
         ReportGenerator reportGenerator = new ReportGeneratorImpl();
-        FileWriterService writerService = new FileWriterServiceImpl();
 
-        // strategy handlers
-        Map<String, OperationHandler> handlers = new HashMap<>();
-        handlers.put("b", new BalanceOperation());
-        handlers.put("s", new SupplyOperation());
-        handlers.put("p", new PurchaseOperation());
-        handlers.put("r", new ReturnOperation());
+        Map<core.basesyntax.model.FruitTransaction.Operation,
+                OperationHandler> handlers = new HashMap<>();
+
+        handlers.put(core.basesyntax.model.FruitTransaction.Operation.BALANCE,
+                new BalanceOperation());
+        handlers.put(core.basesyntax.model.FruitTransaction.Operation.SUPPLY,
+                new SupplyOperation());
+        handlers.put(core.basesyntax.model.FruitTransaction.Operation.PURCHASE,
+                new PurchaseOperation());
+        handlers.put(core.basesyntax.model.FruitTransaction.Operation.RETURN,
+                new ReturnOperation());
 
         OperationStrategy strategy = new OperationStrategyImpl(handlers);
-        FruitShopService fruitShopService = new FruitShopServiceImpl(strategy);
+        FruitShopService shopService = new FruitShopServiceImpl(strategy);
 
-        // 1. read file
-        List<String> lines = readerService.read(INPUT_FILE);
-
-        // 2. convert data
+        List<String> lines = reader.read(INPUT_FILE);
         var transactions = converter.convertToTransaction(lines);
+        shopService.process(transactions);
 
-        // 3. process transactions
-        fruitShopService.process(transactions);
-
-        // 4. generate report
         String report = reportGenerator.getReport(Storage.fruits);
-
-        // 5. write file
-        writerService.write(report, OUTPUT_FILE);
+        writer.write(report, OUTPUT_FILE);
     }
 }
 

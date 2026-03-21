@@ -1,19 +1,23 @@
-package core.basesyntax.strategy;
+package core.basesyntax.strategy.impl;
 
 import core.basesyntax.model.FruitTransaction;
+import core.basesyntax.strategy.OperationHandler;
+import core.basesyntax.strategy.OperationStrategy;
 import java.util.Map;
 
 public class OperationStrategyImpl implements OperationStrategy {
+    private final Map<FruitTransaction.Operation, OperationHandler> handlers;
 
-    private Map<FruitTransaction.Operation, OperationHandler> handlers;
-
-    public OperationStrategyImpl(
-            Map<FruitTransaction.Operation, OperationHandler> handlers) {
+    public OperationStrategyImpl(Map<FruitTransaction.Operation,
+            OperationHandler> handlers) {
         this.handlers = handlers;
     }
 
     @Override
-    public OperationHandler getHandler(FruitTransaction.Operation operation) {
+    public OperationHandler get(FruitTransaction.Operation operation) {
+        if (!handlers.containsKey(operation)) {
+            throw new RuntimeException("No handler for operation: " + operation);
+        }
         return handlers.get(operation);
     }
 }
