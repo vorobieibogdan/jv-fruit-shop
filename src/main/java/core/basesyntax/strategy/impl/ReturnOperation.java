@@ -6,12 +6,8 @@ import core.basesyntax.strategy.OperationHandler;
 
 public class ReturnOperation implements OperationHandler {
     @Override
-    public void handle(FruitTransaction transaction) {
-        Storage.fruits.merge(
-                transaction.getFruit(),
-                transaction.getQuantity(),
-                Integer::sum
-        );
+    public void handle(FruitTransaction t) {
+        Storage.add(t.getFruit(), t.getQuantity());
     }
 }
 

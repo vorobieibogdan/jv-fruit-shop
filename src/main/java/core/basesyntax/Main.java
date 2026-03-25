@@ -46,10 +46,11 @@ public class Main {
         shopService.process(transactions);
 
         ReportGenerator reportGenerator = new ReportGeneratorImpl();
-        String report = reportGenerator.getReport(Storage.fruits);
+        String report = reportGenerator.getReport();
 
         FileWriterService writer = new FileWriterServiceImpl();
         writer.write(report, OUTPUT_FILE);
     }
 }
+
 
